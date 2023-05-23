@@ -3,10 +3,10 @@ import json
 import xml.etree.ElementTree as ET
 
 # 这是你的xcloc文件所在的文件夹
-input_dir = "/Users/nhuji/Desktop/Kingdom Companion Localizations"
+input_dir = "/Users/nhuji/Desktop/Fruta Localizations"
 
 # 这是你想要将解析出的数据保存为JSON的文件夹
-output_dir = "/Users/nhuji/Desktop/Kingdom Companion Localizations JSON"
+output_dir = "/Users/nhuji/Desktop/Fruta Localizations JSON"
 
 # 创建一个字典来保存所有的数据
 data = {}
@@ -26,24 +26,34 @@ for filename in os.listdir(input_dir):
                     tree = ET.parse(os.path.join(root, file))
                     root = tree.getroot()
 
-                    # 遍历xliff文件中的所有trans-unit元素
-                    for trans_unit in root.iter('{urn:oasis:names:tc:xliff:document:1.2}trans-unit'):
-                        # 获取id、source、target和note元素的文本
-                        id = trans_unit.get('id')
-                        source = trans_unit.find(
-                            '{urn:oasis:names:tc:xliff:document:1.2}source').text
-                        target_element = trans_unit.find(
-                            '{urn:oasis:names:tc:xliff:document:1.2}target')
-                        target = target_element.text if target_element is not None else ""
-                        note = trans_unit.find(
-                            '{urn:oasis:names:tc:xliff:document:1.2}note').text
+                    # 遍历xliff文件中的所有file元素
+                    for file in root.iter('{urn:oasis:names:tc:xliff:document:1.2}file'):
+                        # 获取original属性值
+                        original = file.get('original')
 
-                        # 如果这个id还没有在数据字典中，就添加一个新的条目
-                        if id not in data:
-                            data[id] = {'source': source, 'note': note}
+                        # 如果这个original还没有在数据字典中，就添加一个新的条目
+                        if original not in data:
+                            data[original] = {}
 
-                        # 将这种语言的翻译添加到数据字典中
-                        data[id][language_code] = target
+                        # 遍历file元素中的所有trans-unit元素
+                        for trans_unit in file.iter('{urn:oasis:names:tc:xliff:document:1.2}trans-unit'):
+                            # 获取id、source、target和note元素的文本
+                            id = trans_unit.get('id')
+                            source = trans_unit.find(
+                                '{urn:oasis:names:tc:xliff:document:1.2}source').text
+                            target_element = trans_unit.find(
+                                '{urn:oasis:names:tc:xliff:document:1.2}target')
+                            target = target_element.text if target_element is not None else ""
+                            note = trans_unit.find(
+                                '{urn:oasis:names:tc:xliff:document:1.2}note').text
+
+                            # 如果这个id还没有在数据字典中，就添加一个新的条目
+                            if id not in data[original]:
+                                data[original][id] = {
+                                    'source': source, 'note': note}
+
+                            # 将这种语言的翻译添加到数据字典中
+                            data[original][id][language_code] = target
 
 # 将字典转换为JSON格式，并保存到文件中
 os.makedirs(output_dir, exist_ok=True)
