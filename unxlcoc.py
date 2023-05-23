@@ -3,10 +3,10 @@ import json
 import xml.etree.ElementTree as ET
 
 # 这是你的xcloc文件所在的文件夹
-input_dir = "/Users/nhuji/Desktop/Fruta Localizations"
+input_dir = "/Users/nhuji/Desktop/Kingdom Companion Localizations"
 
 # 这是你想要将解析出的数据保存为JSON的文件夹
-output_dir = "/Users/nhuji/Desktop/Fruta Localizations JSON"
+output_dir = "/Users/nhuji/Desktop/Kingdom Companion Localizations JSON"
 
 # 创建一个字典来保存所有的数据
 data = {}
